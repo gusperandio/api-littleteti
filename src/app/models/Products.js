@@ -7,6 +7,7 @@ class Products extends Model {
         name_product: Sequelize.STRING,
         price: Sequelize.FLOAT,
         price_fake: Sequelize.FLOAT,
+        amount: Sequelize.INTEGER,
         colors: Sequelize.ARRAY(Sequelize.STRING),
         desc: Sequelize.STRING,
         active: Sequelize.BOOLEAN,

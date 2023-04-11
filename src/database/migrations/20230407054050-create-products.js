@@ -12,12 +12,16 @@ module.exports = {
         allowNull: false,
       },
       price: {
-        type: Sequelize.FLOAT,
+        type: Sequelize.DECIMAL,
         allowNull: false,
         unique: true,
       },
       price_fake: {
-        type: Sequelize.FLOAT,
+        type: Sequelize.DECIMAL,
+        allowNull: false,
+      },
+      amount: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       colors: {
@@ -33,6 +37,10 @@ module.exports = {
         allowNull: false,
       },
       created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
       },
