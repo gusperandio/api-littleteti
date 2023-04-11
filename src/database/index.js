@@ -3,8 +3,10 @@
 import Sequelize from "sequelize";
 import databaseConfig from "../config/database";
 import User from "../app/models/User";
+import Products from "../app/models/Products";
+import Solicitations from "../app/models/Solicitations";
 
-const models = [User];
+const models = [User, Products, Solicitations];
 
 class Database {
   constructor() {
@@ -16,7 +18,11 @@ class Database {
     this.connection = new Sequelize(databaseConfig);
 
     models.map((model) => {
-      model.init(this.connection);
+      return (
+        model.init(this.connection) &&
+        model.associate &&
+        model.associate(this.connection.models)
+      );
     });
   }
 }

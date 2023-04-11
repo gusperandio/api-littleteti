@@ -1,30 +1,38 @@
 module.exports = {
   up(queryInterface, Sequelize) {
-    return queryInterface.createTable("users", {
+    return queryInterface.createTable("products", {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      name: {
+      name_product: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      email: {
-        type: Sequelize.STRING,
+      price: {
+        type: Sequelize.FLOAT,
         allowNull: false,
         unique: true,
       },
-      password_hash: {
+      price_fake: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
+      colors: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+        allowNull: false,
+      },
+      desc: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      created_at: {
-        type: Sequelize.DATE,
+      active: {
+        type: Sequelize.BOOLEAN,
         allowNull: false,
       },
-      updated_at: {
+      created_at: {
         type: Sequelize.DATE,
         allowNull: false,
       },
@@ -33,6 +41,6 @@ module.exports = {
 
   // eslint-disable-next-line no-unused-vars
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("products");
   },
 };

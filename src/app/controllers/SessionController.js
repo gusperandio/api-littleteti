@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable spaced-comment */
 import jwt from "jsonwebtoken";
-import User from "./User";
+import User from "../models/User";
 
 import authConfig from "../../config/auth";
 
