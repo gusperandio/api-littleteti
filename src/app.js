@@ -1,8 +1,24 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import express from "express";
-import routes from "./routes";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
 
+import routes from "./routes";
 //! Importando database
 import "./database";
+
+// const corsOptions = {
+//   origin: "https://littleteti.com.br",
+//   optionsSuccessStatus: 200,
+// };
+
+const apiLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: "Limite de solicitações atingido",
+});
 
 class App {
   constructor() {
@@ -12,6 +28,8 @@ class App {
   }
 
   middlewares() {
+    this.server.use(apiLimit);
+    this.server.use(cors());
     this.server.use(express.json());
   }
 
