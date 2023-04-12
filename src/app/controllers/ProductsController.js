@@ -1,4 +1,8 @@
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
 import * as Yup from "yup";
+import path from "path";
+import fs from "fs/promises";
 import Products from "../models/Products";
 
 class ProductsController {
@@ -28,12 +32,23 @@ class ProductsController {
 
     const { id } = await Products.create(req.body);
 
-    return resp.json({ ok: id });
+    return resp.json({ id });
   }
 
   async getAll(req, resp) {
     const products = await Products.findAll();
-    return resp.json(products);
+    const dir = `http://localhost:3334/files/`;
+    fs.readdir(path.join(__dirname, "..", "..", "..", "uploads")).then(
+      (files) => {
+        const images = files.filter((e) => {
+          return e.includes(`_${4}${path.extname(e)}`);
+        });
+        console.log(dir + images[0]);
+      }
+    );
+
+    return resp.status(201).json(products);
+    // return resp.json(products);
   }
 }
 

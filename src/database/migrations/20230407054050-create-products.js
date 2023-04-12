@@ -14,7 +14,6 @@ module.exports = {
       price: {
         type: Sequelize.DECIMAL,
         allowNull: false,
-        unique: true,
       },
       price_fake: {
         type: Sequelize.DECIMAL,

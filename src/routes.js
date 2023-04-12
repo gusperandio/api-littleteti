@@ -11,14 +11,21 @@ import uploadConfig from "./config/upload";
 const routes = new Router();
 const upload = multer(uploadConfig);
 
-// ? Rotas livres
+// ? Rotas livres7
+
+//* USERS */
 routes.post("/users", UserController.store);
 routes.post("/session", SessionController.store);
+
+//*  PRODUCTS */
 routes.get("/products", ProductsController.getAll);
 routes.post("/products", ProductsController.store);
-routes.post("/productsPhotos", upload.array("roupas"));
+routes.post("/productsPhotos", upload.array("roupas", 3), (req, resp) => {
+  resp.status(201);
+  resp.end();
+});
 
-routes.use(authMiddleware);
-// ! todas rotas abaixo necessitam Token Authorization
+routes.use(authMiddleware); // ! ABAIXO APENAS Token Authorization
 routes.put("/users", UserController.update);
+
 export default routes;

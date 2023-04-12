@@ -6,7 +6,8 @@
   "author": "Gustavo Sperandio <gustavo.sperandio25@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "start": "pm2 start src/server.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
