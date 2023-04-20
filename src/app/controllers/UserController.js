@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import User from "../models/User";
 
 class UserController {
-  async store(req, resp) {
+  async newUser(req, resp) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string().email().required(),
@@ -13,22 +13,19 @@ class UserController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return resp.status(400).json({ error: "Falha na validação" });
+      return resp.status(400).json({ message: "Falha na validação" });
     }
 
-    const userExists = await User.findOne({
+    const [user, created] = await User.findOrCreate({
       where: { email: req.body.email },
+      defaults: req.body,
     });
-    if (userExists) {
-      return resp.status(400).json({ error: "User already exists" });
+    const { id, name, email } = user;
+    if (!created) {
+      return resp.status(400).json({ message: "User already exists" });
     }
-    const { id, name, email } = await User.create(req.body);
 
-    return resp.json({
-      id,
-      name,
-      email,
-    });
+    return resp.json({ id, name, email });
   }
 
   async update(req, resp) {
@@ -49,7 +46,7 @@ class UserController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return resp.status(400).json({ error: "Falha na validação" });
+      return resp.status(400).json({ message: "Falha na validação" });
     }
 
     if (email !== user.email) {
@@ -58,12 +55,12 @@ class UserController {
       });
 
       if (userExists) {
-        return resp.status(400).send("User already exists");
+        return resp.status(400).json({ message: "Usuário ja existe" });
       }
     }
 
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
-      return resp.status(401).json({ error: "Senha incorreta" });
+      return resp.status(401).json({ message: "Senha incorreta" });
     }
 
     const { id, name } = await user.update(req.body);

@@ -11,13 +11,13 @@ import uploadConfig from "./config/upload";
 const routes = new Router();
 const upload = multer(uploadConfig);
 
-// ? Rotas livres7
+// ? Rotas livres
 
-//* USERS */
-routes.post("/users", UserController.store);
+//* USERS
+routes.post("/users", UserController.newUser);
 routes.post("/session", SessionController.store);
 
-//*  PRODUCTS */
+//*  PRODUCTS
 routes.get("/products", ProductsController.getAll);
 routes.post("/products", ProductsController.store);
 routes.post("/productsPhotos", upload.array("roupas", 3), (req, resp) => {
@@ -25,7 +25,8 @@ routes.post("/productsPhotos", upload.array("roupas", 3), (req, resp) => {
   resp.end();
 });
 
-routes.use(authMiddleware); // ! ABAIXO APENAS Token Authorization
+// ! Rotas trancadas via TOKEN
+routes.use(authMiddleware);
 routes.put("/users", UserController.update);
 
 export default routes;

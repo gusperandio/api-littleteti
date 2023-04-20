@@ -1,9 +1,14 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable consistent-return */
 /* eslint-disable array-callback-return */
 import * as Yup from "yup";
 import path from "path";
 import fs from "fs/promises";
+import Sequelize from "sequelize";
 import Products from "../models/Products";
+import databaseConfig from "../../config/database";
 
 class ProductsController {
   async store(req, resp) {
@@ -38,17 +43,38 @@ class ProductsController {
   async getAll(req, resp) {
     const products = await Products.findAll();
     const dir = `http://localhost:3334/files/`;
-    fs.readdir(path.join(__dirname, "..", "..", "..", "uploads")).then(
-      (files) => {
-        const images = files.filter((e) => {
-          return e.includes(`_${4}${path.extname(e)}`);
-        });
-        console.log(dir + images[0]);
-      }
-    );
 
-    return resp.status(201).json(products);
-    // return resp.json(products);
+    const dadosFinais = (id) => {
+      return fs
+        .readdir(path.join(__dirname, "..", "..", "..", "uploads"))
+        .then((files) => {
+          const images = files.filter((e) => {
+            return e.includes(`_${id}${path.extname(e)}`);
+          });
+
+          const result = [];
+          for (const image of images) {
+            result.push(dir + image);
+          }
+          return result;
+        });
+    };
+    const finalAll = [];
+
+    async function printFiles() {
+      for (const dado of products) {
+        dado.dataValues.image = await dadosFinais(dado.id);
+        finalAll.push(dado);
+      }
+    }
+    await printFiles();
+    const myObject = { ...finalAll };
+    // const sequelize = new Sequelize(databaseConfig);
+    // const prod = await sequelize.query("SELECT id FROM products where id > 3", {
+    //   type: Sequelize.SELECT,
+    // });
+
+    return resp.status(201).json(myObject);
   }
 }
 
