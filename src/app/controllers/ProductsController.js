@@ -10,6 +10,39 @@ import Sequelize from "sequelize";
 import Products from "../models/Products";
 import databaseConfig from "../../config/database";
 
+function dadosFinais(id) {
+  const dir = `http://localhost:3334/files/`;
+
+  return fs
+    .readdir(path.join(__dirname, "..", "..", "..", "uploads"))
+    .then((files) => {
+      const images = files.filter((e) => {
+        return e.includes(`_${id}${path.extname(e)}`);
+      });
+
+      const result = [];
+      for (const image of images) {
+        result.push(dir + image);
+      }
+      return result;
+    });
+}
+
+async function printFiles(products) {
+  const final = [];
+  if (products.length > 1) {
+    for (const dado of products) {
+      dado.dataValues.image = await dadosFinais(dado.id);
+      final.push(dado);
+    }
+  } else {
+    products.dataValues.image = await dadosFinais(products.id);
+    final.push(products);
+  }
+
+  return final;
+}
+
 class ProductsController {
   async store(req, resp) {
     const schema = Yup.object().shape({
@@ -42,40 +75,26 @@ class ProductsController {
 
   async getAll(req, resp) {
     const products = await Products.findAll();
-    const dir = `http://localhost:3334/files/`;
+    const productsFinal = { ...(await printFiles(products)) };
 
-    const dadosFinais = (id) => {
-      return fs
-        .readdir(path.join(__dirname, "..", "..", "..", "uploads"))
-        .then((files) => {
-          const images = files.filter((e) => {
-            return e.includes(`_${id}${path.extname(e)}`);
-          });
+    return resp.status(201).json(productsFinal);
+  }
 
-          const result = [];
-          for (const image of images) {
-            result.push(dir + image);
-          }
-          return result;
-        });
-    };
-    const finalAll = [];
-
-    async function printFiles() {
-      for (const dado of products) {
-        dado.dataValues.image = await dadosFinais(dado.id);
-        finalAll.push(dado);
-      }
+  async getOne(req, resp) {
+    const { id } = req.params;
+    const product = await Products.findByPk(id);
+    if (!product) {
+      return resp.status(400).json({ message: "Produto não encontrado!" });
     }
-    await printFiles();
-    const myObject = { ...finalAll };
-    // const sequelize = new Sequelize(databaseConfig);
-    // const prod = await sequelize.query("SELECT id FROM products where id > 3", {
-    //   type: Sequelize.SELECT,
-    // });
+    const productFinal = { ...(await printFiles(product)) };
 
-    return resp.status(201).json(myObject);
+    return resp.status(201).json(productFinal);
   }
 }
 
 export default new ProductsController();
+
+// const sequelize = new Sequelize(databaseConfig);
+// const prod = await sequelize.query("SELECT id FROM products where id > 3", {
+//   type: Sequelize.SELECT,
+// });

@@ -22,7 +22,7 @@ class UserController {
     });
     const { id, name, email } = user;
     if (!created) {
-      return resp.status(400).json({ message: "User already exists" });
+      return resp.status(400).json({ message: "Usuário já existe" });
     }
 
     return resp.json({ id, name, email });
