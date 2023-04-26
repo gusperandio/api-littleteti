@@ -14,6 +14,7 @@ const upload = multer(uploadConfig);
 // ? Rotas livres
 
 //* USERS
+routes.get("/users/:email", UserController.checkEmail);
 routes.post("/users", UserController.newUser);
 routes.post("/session", SessionController.store);
 

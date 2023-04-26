@@ -28,6 +28,18 @@ class UserController {
     return resp.json({ id, name, email });
   }
 
+  async checkEmail(req, resp) {
+    const user = await User.findOne({
+      where: { email: req.params.email },
+    });
+
+    if (user) {
+      return resp.status(400).json({ message: "Usuario já existe" });
+    }
+
+    return resp.status(200).json(true);
+  }
+
   async update(req, resp) {
     const { email, oldPassword } = req.body;
     const user = await User.findByPk(req.userId);
