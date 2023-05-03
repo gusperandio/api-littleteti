@@ -3,6 +3,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as Yup from "yup";
 import User from "../models/User";
+import { genPassword } from "../../config/password";
 
 class UserController {
   async newUser(req, resp) {
@@ -11,6 +12,10 @@ class UserController {
       email: Yup.string().email().required(),
       password: Yup.string().required().min(6),
     });
+
+    if (!req.body.password) {
+      req.body.password = genPassword();
+    }
 
     if (!(await schema.isValid(req.body))) {
       return resp.status(400).json({ message: "Falha na validação" });

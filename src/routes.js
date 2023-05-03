@@ -29,6 +29,9 @@ routes.post("/productsPhotos", upload.array("roupas", 3), (req, resp) => {
 
 // ! Rotas trancadas via TOKEN
 routes.use(authMiddleware);
+routes.options("/", (req, resp) => {
+  resp.status(200);
+});
 routes.put("/users", UserController.update);
 
 export default routes;

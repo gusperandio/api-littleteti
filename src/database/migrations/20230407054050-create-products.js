@@ -23,8 +23,8 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      colors: {
-        type: Sequelize.ARRAY(Sequelize.STRING),
+      girl: {
+        type: Sequelize.BOOLEAN,
         allowNull: false,
       },
       desc: {

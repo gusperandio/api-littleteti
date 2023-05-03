@@ -1,3 +1,5 @@
+/* eslint-disable no-return-await */
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-undef */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
@@ -6,7 +8,7 @@
 import * as Yup from "yup";
 import path from "path";
 import fs from "fs/promises";
-import Sequelize from "sequelize";
+import { Sequelize } from "sequelize";
 import Products from "../models/Products";
 import databaseConfig from "../../config/database";
 
@@ -74,8 +76,20 @@ class ProductsController {
   }
 
   async getAll(req, resp) {
-    const products = await Products.findAll();
-    const productsFinal = { ...(await printFiles(products)) };
+    const products =
+      req.query.girl === undefined
+        ? await Products.findAll()
+        : await Products.findAll({
+            where: {
+              girl: req.query.girl,
+            },
+          });
+
+    if (products.length === 0) {
+      return resp.status(201).json([]);
+    }
+
+    const productsFinal = await printFiles(products);
 
     return resp.status(201).json(productsFinal);
   }
@@ -95,6 +109,4 @@ class ProductsController {
 export default new ProductsController();
 
 // const sequelize = new Sequelize(databaseConfig);
-// const prod = await sequelize.query("SELECT id FROM products where id > 3", {
-//   type: Sequelize.SELECT,
-// });
+// const prod =
