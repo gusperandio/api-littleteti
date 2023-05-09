@@ -21,6 +21,7 @@ routes.post("/session", SessionController.store);
 //*  PRODUCTS
 routes.get("/products", ProductsController.getAll);
 routes.get("/products/:id", ProductsController.getOne);
+routes.get("/products/:id/:girl", ProductsController.getFooter);
 routes.post("/products", ProductsController.store);
 routes.post("/productsPhotos", upload.array("roupas", 3), (req, resp) => {
   resp.status(201);

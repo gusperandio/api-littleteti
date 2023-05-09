@@ -1,16 +1,10 @@
-/* eslint-disable no-return-await */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-undef */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable consistent-return */
-/* eslint-disable array-callback-return */
 import * as Yup from "yup";
 import path from "path";
 import fs from "fs/promises";
-import { Sequelize } from "sequelize";
+import { Op } from "sequelize";
 import Products from "../models/Products";
-import databaseConfig from "../../config/database";
 
 function dadosFinais(id) {
   const dir = `http://localhost:3334/files/`;
@@ -41,7 +35,6 @@ async function printFiles(products) {
     products.dataValues.image = await dadosFinais(products.id);
     final.push(products);
   }
-
   return final;
 }
 
@@ -78,10 +71,15 @@ class ProductsController {
   async getAll(req, resp) {
     const products =
       req.query.girl === undefined
-        ? await Products.findAll()
+        ? await Products.findAll({
+            where: {
+              active: true,
+            },
+          })
         : await Products.findAll({
             where: {
               girl: req.query.girl,
+              active: true,
             },
           });
 
@@ -100,13 +98,37 @@ class ProductsController {
     if (!product) {
       return resp.status(400).json({ message: "Produto não encontrado!" });
     }
-    const productFinal = { ...(await printFiles(product)) };
 
+    if (!product.active) {
+      return resp.status(400).json({ message: "Produto fora de estoque" });
+    }
+
+    const productFinal = await printFiles(product);
+
+    return resp.status(201).json(productFinal);
+  }
+
+  async getFooter(req, resp) {
+    const girlBool = req.params.girl === "true";
+    const productsFooter = await Products.findAll({
+      where: {
+        id: {
+          [Op.ne]: req.params.id,
+        },
+        girl: girlBool,
+        active: true,
+      },
+    });
+
+    if (!productsFooter) {
+      return resp.status(400).json({ message: "Produto não encontrado!" });
+    }
+
+    const productFinal = await printFiles(
+      productsFooter.length > 1 ? productsFooter : productsFooter[0]
+    );
     return resp.status(201).json(productFinal);
   }
 }
 
 export default new ProductsController();
-
-// const sequelize = new Sequelize(databaseConfig);
-// const prod =
