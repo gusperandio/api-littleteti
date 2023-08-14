@@ -5,8 +5,9 @@ import databaseConfig from "../config/database";
 import User from "../app/models/User";
 import Products from "../app/models/Products";
 import Solicitations from "../app/models/Solicitations";
+import ProductSizes from "../app/models/ProductSizes";
 
-const models = [User, Products, Solicitations];
+const models = [User, Solicitations, Products, ProductSizes];
 
 class Database {
   constructor() {
@@ -14,15 +15,16 @@ class Database {
   }
 
   init() {
-    //! Conexão do banco de dados
     this.connection = new Sequelize(databaseConfig);
 
-    models.map((model) => {
-      return (
-        model.init(this.connection) &&
-        model.associate &&
-        model.associate(this.connection.models)
-      );
+    models.forEach((model) => {
+      model.init(this.connection);
+    });
+
+    models.forEach((model) => {
+      if (model.associate) {
+        model.associate(this.connection.models);
+      }
     });
   }
 }

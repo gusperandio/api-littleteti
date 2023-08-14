@@ -13,6 +13,7 @@ class Solicitations extends Model {
       },
       {
         sequelize,
+        modelName: "solicitations",
       }
     );
 
@@ -21,7 +22,7 @@ class Solicitations extends Model {
 
   //! Utilizado para vincular o ID da pessoa
   static associate(models) {
-    this.belongsTo(models.User, { foreignKey: "user_id", as: "user" });
+    this.belongsTo(models.users, { foreignKey: "user_id", as: "user" });
   }
 }
 

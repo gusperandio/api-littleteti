@@ -13,6 +13,7 @@ class User extends Model {
       },
       {
         sequelize,
+        modelName: "users",
       }
     );
 
@@ -20,6 +21,13 @@ class User extends Model {
       if (user.password) {
         user.password_hash = await bcrypt.hash(user.password, 10);
       }
+    });
+  }
+
+  static associate(models) {
+    this.hasMany(models.solicitations, {
+      foreignKey: "user_id",
+      as: "solicitations",
     });
   }
 
